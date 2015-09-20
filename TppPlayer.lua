@@ -1267,40 +1267,76 @@ if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ACTION)==PlayerPad.ACTION
 	button_3s_disable_action = true
 
 	if (Time.GetRawElapsedTimeSinceStartUp() - e.button_3s_hold_pressed2 > 1)then
+
+		local cycle_weather={TppDefine.WEATHER.SUNNY, TppDefine.WEATHER.CLOUDY, TppDefine.WEATHER.RAINY, TppDefine.WEATHER.SANDSTORM, TppDefine.WEATHER.FOGGY}
+		local cycle_weather_string={"Sunny", "Cloudy", "Rainy", "Sandstorm", "Foggy"}
 	
 		e.button_3s_hold_pressed2 = Time.GetRawElapsedTimeSinceStartUp()
 
-		--[[vars.playerType=PlayerType.DD_MALE
-		vars.playerPartsType=PlayerPartsType.NORMAL
-		vars.playerCamoType=PlayerCamoType.OLIVEDRAB
-		vars.playerFaceEquipId=0
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RIGHT)==PlayerPad.RIGHT)then
+			if (e.cycle_ClockTimeScale == nil)then
+				e.cycle_ClockTimeScale = 20
+			end
 
-		if last_faceid then
-		vars.playerFaceId=last_faceid + 1
-		else
-		vars.playerFaceId=30
-		end--]]
-
-		--TppCommand.Weather.SetClockTimeScale(20)
-		
-		--TppUiCommand.SetErrorPopupParam(last_faceid)
-		--TppUiCommand.ShowErrorPopup(0,Popup.TYPE_ONE_CANCEL_BUTTON)
-		--TppUiCommand.SetPopupText(string.format("FaceId=%d",last_faceid))
-
-		--TppUiCommand.AnnounceLogDelayTime(1)
-		--TppUiCommand.AnnounceLogView(string.format("FaceId=%d",last_faceid))
-
-		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.PRIMARY_WEAPON)==PlayerPad.PRIMARY_WEAPON)then
-			vars.initWeapons[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
-			vars.weapons[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
-			vars.initCustomizedWeapon[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
-			vars.customizedWeapon[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
-
-			--TppUiCommand.AnnounceLogDelayTime(0)
-			--TppUiCommand.AnnounceLogView("PRIMARY_WEAPON TEST.")
+			if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
+				e.cycle_ClockTimeScale = e.cycle_ClockTimeScale + 100
+			elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
+				e.cycle_ClockTimeScale = e.cycle_ClockTimeScale + 10
+			else
+				e.cycle_ClockTimeScale = e.cycle_ClockTimeScale + 1
+			end
+			
+			TppCommand.Weather.SetClockTimeScale(e.cycle_ClockTimeScale)
+			
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView(string.format("Changed time scale to: %d", e.cycle_ClockTimeScale))
 		end
 
-		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RIGHT)==PlayerPad.RIGHT)then
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.LEFT)==PlayerPad.LEFT)then
+			if (e.cycle_ClockTimeScale == nil)then
+				e.cycle_ClockTimeScale = 20
+			end
+
+			if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
+				e.cycle_ClockTimeScale = e.cycle_ClockTimeScale - 100
+			elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
+				e.cycle_ClockTimeScale = e.cycle_ClockTimeScale - 10		
+			else
+				e.cycle_ClockTimeScale = e.cycle_ClockTimeScale - 1
+			end
+
+			if (e.cycle_ClockTimeScale < 1)then
+				e.cycle_ClockTimeScale = 0
+			end
+
+			TppCommand.Weather.SetClockTimeScale(e.cycle_ClockTimeScale)
+			
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView(string.format("Changed time scale to: %d", e.cycle_ClockTimeScale))
+		end
+		
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.DOWN)==PlayerPad.DOWN)then
+		
+			if (e.cycle_weather_index == nil)then
+				e.cycle_weather_index = 0
+			end
+
+			local last_cycle_weather_index = e.cycle_weather_index
+
+			e.cycle_weather_index=last_cycle_weather_index + 1
+			
+			if (e.cycle_weather_index > 5 or e.cycle_weather_index < 1)then
+				e.cycle_weather_index = 1
+			end
+			
+			TppWeather.ForceRequestWeather(cycle_weather[e.cycle_weather_index], 0)
+
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView(string.format("Changed weather to: %s", cycle_weather_string[e.cycle_weather_index]))
+
+		end
+
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.PRIMARY_WEAPON)==PlayerPad.PRIMARY_WEAPON)then
 			TppRevenge.ResetRevenge()
 
 			TppUiCommand.AnnounceLogDelayTime(0)

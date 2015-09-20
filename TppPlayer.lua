@@ -1123,7 +1123,197 @@ e.SetInitWeapons(TppDefine.CYPR_PLAYER_INITIAL_WEAPON_TABLE)e.SetInitItems(TppDe
 end
 function e.OnReload()e.messageExecTable=Tpp.MakeMessageExecTable(e.Messages())end
 function e.OnMessage(l,i,t,n,r,o,a)Tpp.DoMessage(e.messageExecTable,TppMission.CheckMessageOption,l,i,t,n,r,o,a)end
-function e.Update()e.UpdateDeliveryWarp()end
+
+function e.Update()
+
+if e.button_3s_disable_action then
+	vars.playerDisableActionFlag=PlayerDisableAction.NONE
+	e.button_3s_disable_action = false
+end
+
+if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RELOAD)==PlayerPad.RELOAD)then
+
+	vars.playerDisableActionFlag=PlayerDisableAction.OPEN_EQUIP_MENU
+	e.button_3s_disable_action = true
+
+	if (Time.GetRawElapsedTimeSinceStartUp() - e.button_3s_hold_pressed > 1)then
+
+		local last_faceid=vars.playerFaceId
+		local cycle_playerTypes={PlayerType.SNAKE, PlayerType.DD_MALE, PlayerType.DD_FEMALE, PlayerType.AVATAR}
+		local cycle_playerTypes_string={"Snake", "DD Male", "DD Female", "Avatar"}
+		local cycle_PlayerCamoTypes={PlayerCamoType.OLIVEDRAB, PlayerCamoType.SPLITTER, PlayerCamoType.SQUARE, PlayerCamoType.TIGERSTRIPE, PlayerCamoType.GOLDTIGER, PlayerCamoType.FOXTROT, PlayerCamoType.WOODLAND, PlayerCamoType.WETWORK, PlayerCamoType.SNEAKING_SUIT_GZ, PlayerCamoType.SNEAKING_SUIT_TPP, PlayerCamoType.BATTLEDRESS, PlayerCamoType.PARASITE, PlayerCamoType.LEATHER, PlayerCamoType.SOLIDSNAKE, PlayerCamoType.NINJA, PlayerCamoType.RAIDEN}
+		local cycle_PlayerCamoTypes_string={"Olivedrab", "Splitter", "Square", "Tigerstripe", "Goldtiger", "Foxtrot", "Woodland", "Wetwork", "Sneaking Suit GZ", "Sneaking Suit TPP", "Battledress", "Parasite", "Leather", "Solid Snake", "Ninja", "Raiden"}
+	
+		e.button_3s_hold_pressed = Time.GetRawElapsedTimeSinceStartUp()
+		
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RIGHT)==PlayerPad.RIGHT)then
+			if last_faceid then
+				if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
+					vars.playerFaceId=last_faceid + 100
+				elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
+					vars.playerFaceId=last_faceid + 10
+				else
+					vars.playerFaceId=last_faceid + 1
+				end
+			else
+				vars.playerFaceId=0
+			end
+			
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView(string.format("Face ID: %d",last_faceid))
+		end
+
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.LEFT)==PlayerPad.LEFT)then
+
+			if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
+				if last_faceid and last_faceid > 99 then
+					vars.playerFaceId=last_faceid - 100
+				else
+					vars.playerFaceId=0
+				end
+			elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
+				if last_faceid and last_faceid > 9 then
+					vars.playerFaceId=last_faceid - 10
+				else
+					vars.playerFaceId=0
+				end
+			else
+				if last_faceid and last_faceid > 0 then
+					vars.playerFaceId=last_faceid - 1
+				else
+					vars.playerFaceId=0
+				end
+			end
+
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView(string.format("Face ID: %d",last_faceid))
+		end
+		
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.PRIMARY_WEAPON)==PlayerPad.PRIMARY_WEAPON)then
+
+			if (vars.playerCamoType == PlayerCamoType.SNEAKING_SUIT_GZ)then
+				TppUiCommand.AnnounceLogDelayTime(0)
+				TppUiCommand.AnnounceLogView("Cannot change player type while using Sneaking Suit GZ")
+			else
+				if (e.cycle_playerTypes_index == nil)then
+					e.cycle_playerTypes_index = 0
+				end
+
+				if (e.cycle_playerTypes_face == nil)then
+					e.cycle_playerTypes_face = 0
+				end
+				
+				local last_cycle_playerTypes_index = e.cycle_playerTypes_index
+				
+				e.cycle_playerTypes_index=last_cycle_playerTypes_index + 1
+				
+				if (e.cycle_playerTypes_index > 4 or e.cycle_playerTypes_index < 1)then
+					e.cycle_playerTypes_index = 1
+				end
+
+				if vars.playerFaceId ~= 0 and vars.playerFaceId ~= nil then
+					e.cycle_playerTypes_face = vars.playerFaceId
+				end
+
+				vars.playerType=cycle_playerTypes[e.cycle_playerTypes_index]
+				vars.playerFaceId=0
+
+				if vars.playerType == PlayerType.DD_MALE or vars.playerType == PlayerType.DD_FEMALE then
+					vars.playerFaceId = e.cycle_playerTypes_face
+				end
+				
+				TppUiCommand.AnnounceLogDelayTime(0)
+				TppUiCommand.AnnounceLogView(string.format("Changed player type to: %s", cycle_playerTypes_string[e.cycle_playerTypes_index]))
+			end
+		end
+		
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.DOWN)==PlayerPad.DOWN)then
+
+			if (e.cycle_PlayerCamoTypes_index == nil)then
+				e.cycle_PlayerCamoTypes_index = 0
+			end
+
+			local last_cycle_PlayerCamoTypes_index = e.cycle_PlayerCamoTypes_index
+
+			e.cycle_PlayerCamoTypes_index=last_cycle_PlayerCamoTypes_index + 1
+
+			if (cycle_PlayerCamoTypes[e.cycle_PlayerCamoTypes_index] == PlayerCamoType.SNEAKING_SUIT_GZ and vars.playerType ~= PlayerType.SNAKE)then
+				last_cycle_PlayerCamoTypes_index = e.cycle_PlayerCamoTypes_index
+				e.cycle_PlayerCamoTypes_index=last_cycle_PlayerCamoTypes_index + 1
+			end
+			
+			if (e.cycle_PlayerCamoTypes_index > 16 or e.cycle_PlayerCamoTypes_index < 1)then
+				e.cycle_PlayerCamoTypes_index = 1
+			end
+			
+			vars.playerCamoType=cycle_PlayerCamoTypes[e.cycle_PlayerCamoTypes_index]
+			vars.playerPartsType=PlayerPartsType.NORMAL
+			vars.playerFaceEquipId=0
+
+
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView(string.format("Changed player camo to: %s", cycle_PlayerCamoTypes_string[e.cycle_PlayerCamoTypes_index]))
+			
+		end
+
+	end
+else
+	e.button_3s_hold_pressed = Time.GetRawElapsedTimeSinceStartUp()
+end
+
+if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ACTION)==PlayerPad.ACTION)then
+
+	vars.playerDisableActionFlag=PlayerDisableAction.OPEN_EQUIP_MENU
+	button_3s_disable_action = true
+
+	if (Time.GetRawElapsedTimeSinceStartUp() - e.button_3s_hold_pressed2 > 1)then
+	
+		e.button_3s_hold_pressed2 = Time.GetRawElapsedTimeSinceStartUp()
+
+		--[[vars.playerType=PlayerType.DD_MALE
+		vars.playerPartsType=PlayerPartsType.NORMAL
+		vars.playerCamoType=PlayerCamoType.OLIVEDRAB
+		vars.playerFaceEquipId=0
+
+		if last_faceid then
+		vars.playerFaceId=last_faceid + 1
+		else
+		vars.playerFaceId=30
+		end--]]
+
+		--TppCommand.Weather.SetClockTimeScale(20)
+		
+		--TppUiCommand.SetErrorPopupParam(last_faceid)
+		--TppUiCommand.ShowErrorPopup(0,Popup.TYPE_ONE_CANCEL_BUTTON)
+		--TppUiCommand.SetPopupText(string.format("FaceId=%d",last_faceid))
+
+		--TppUiCommand.AnnounceLogDelayTime(1)
+		--TppUiCommand.AnnounceLogView(string.format("FaceId=%d",last_faceid))
+
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.PRIMARY_WEAPON)==PlayerPad.PRIMARY_WEAPON)then
+			vars.initWeapons[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
+			vars.weapons[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
+			vars.initCustomizedWeapon[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
+			vars.customizedWeapon[TppDefine.WEAPONSLOT.PRIMARY_HIP]=TppEquip.EPQ_None
+
+			--TppUiCommand.AnnounceLogDelayTime(0)
+			--TppUiCommand.AnnounceLogView("PRIMARY_WEAPON TEST.")
+		end
+
+		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RIGHT)==PlayerPad.RIGHT)then
+			TppRevenge.ResetRevenge()
+
+			TppUiCommand.AnnounceLogDelayTime(0)
+			TppUiCommand.AnnounceLogView("Reset Enemy Preparedness. Start a new mission to take effect.")
+		end
+
+	end
+else
+	e.button_3s_hold_pressed2 = Time.GetRawElapsedTimeSinceStartUp()
+end
+
+e.UpdateDeliveryWarp()
+end
 local i={[TppDefine.WEATHER.SUNNY]=0,[TppDefine.WEATHER.CLOUDY]=-10,[TppDefine.WEATHER.RAINY]=-30,[TppDefine.WEATHER.FOGGY]=-50,[TppDefine.WEATHER.SANDSTORM]=-70}function e.MakeFultonRecoverSucceedRatio(t,a,o,r,l,p)local c={[TppMotherBaseManagementConst.SECTION_FUNC_RANK_S]=60,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_A]=50,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_B]=40,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_C]=30,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_D]=20,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_E]=10,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_F]=0,[TppMotherBaseManagementConst.SECTION_FUNC_RANK_NONE]=0}local t=a
 local a=0
 local s=100

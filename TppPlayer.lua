@@ -1048,7 +1048,88 @@ vars.playerPartsType=PlayerPartsType.NORMAL
 end
 end
 end
-function e.Init(a)e.messageExecTable=Tpp.MakeMessageExecTable(e.Messages())if gvars.ini_isTitleMode then
+function e.Init(a)
+					vars.avatarFaceRaceIndex=0
+					vars.avatarAcceFlag=0
+					vars.avatarFaceTypeIndex=1
+					vars.avatarFaceVariationIndex=1
+					vars.avatarFaceColorIndex=0
+					vars.avatarHairStyleIndex=0
+					vars.avatarRightEyeColorIndex=0
+					vars.avatarRightEyeBrightnessIndex=0
+					vars.avatarLeftEyeColorIndex=1
+					vars.avatarLeftEyeBrightnessIndex=0
+					vars.avatarHairColor=1
+					vars.avatarBerdStyle=0
+					vars.avatarBerdLength=1
+					vars.avatarEbrwStyle=3
+					vars.avatarEbrwWide=1
+					vars.avatarGashOrTatoVariationIndex=0
+					vars.avatarTatoColorIndex=0
+					vars.avatarMotionFrame[0]=4
+					vars.avatarMotionFrame[1]=9
+					vars.avatarMotionFrame[2]=5
+					vars.avatarMotionFrame[3]=5
+					vars.avatarMotionFrame[4]=7
+					vars.avatarMotionFrame[5]=1
+					vars.avatarMotionFrame[6]=7
+					vars.avatarMotionFrame[7]=4
+					vars.avatarMotionFrame[8]=4
+					vars.avatarMotionFrame[9]=5
+					vars.avatarMotionFrame[10]=5
+					vars.avatarMotionFrame[11]=6
+					vars.avatarMotionFrame[12]=5
+					vars.avatarMotionFrame[13]=10
+					vars.avatarMotionFrame[14]=8
+					vars.avatarMotionFrame[15]=4
+					vars.avatarMotionFrame[16]=6
+					vars.avatarMotionFrame[17]=10
+					vars.avatarMotionFrame[18]=0
+					vars.avatarMotionFrame[19]=5
+					vars.avatarMotionFrame[20]=5
+					vars.avatarMotionFrame[21]=7
+					vars.avatarMotionFrame[22]=3
+					vars.avatarMotionFrame[23]=3
+					vars.avatarMotionFrame[24]=6
+					vars.avatarMotionFrame[25]=10
+					vars.avatarMotionFrame[26]=8
+					vars.avatarMotionFrame[27]=6
+					vars.avatarMotionFrame[28]=6
+					vars.avatarMotionFrame[29]=8
+					vars.avatarMotionFrame[30]=2
+					vars.avatarMotionFrame[31]=5
+					vars.avatarMotionFrame[32]=2
+					vars.avatarMotionFrame[33]=1
+					vars.avatarMotionFrame[34]=5
+					vars.avatarMotionFrame[35]=5
+					vars.avatarMotionFrame[36]=4
+					vars.avatarMotionFrame[37]=7
+					vars.avatarMotionFrame[38]=6
+					vars.avatarMotionFrame[39]=9
+					vars.avatarMotionFrame[40]=4
+					vars.avatarMotionFrame[41]=7
+					vars.avatarMotionFrame[42]=6
+					vars.avatarMotionFrame[43]=5
+					vars.avatarMotionFrame[44]=1
+					vars.avatarMotionFrame[45]=4
+					vars.avatarMotionFrame[46]=2
+					vars.avatarMotionFrame[47]=7
+					vars.avatarMotionFrame[48]=8
+					vars.avatarMotionFrame[49]=5
+					vars.avatarMotionFrame[50]=8
+					vars.avatarMotionFrame[51]=6
+					vars.avatarMotionFrame[52]=7
+					vars.avatarMotionFrame[53]=4
+					vars.avatarMotionFrame[54]=7
+					vars.avatarMotionFrame[55]=4
+					vars.avatarMotionFrame[56]=5
+					vars.avatarMotionFrame[57]=9
+					vars.avatarMotionFrame[58]=3
+					vars.avatarMotionFrame[59]=5
+					vars.avatarSaveIsValid=1
+
+
+e.messageExecTable=Tpp.MakeMessageExecTable(e.Messages())if gvars.ini_isTitleMode then
 vars.isInitialWeapon[TppDefine.WEAPONSLOT.PRIMARY_HIP]=1
 vars.isInitialWeapon[TppDefine.WEAPONSLOT.PRIMARY_BACK]=1
 vars.isInitialWeapon[TppDefine.WEAPONSLOT.SECONDARY]=1
@@ -1138,7 +1219,6 @@ if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RELOAD)==PlayerPad.RELOAD
 
 	if (Time.GetRawElapsedTimeSinceStartUp() - e.button_3s_hold_pressed > 1)then
 
-		local last_faceid=vars.playerFaceId
 		local cycle_playerTypes={PlayerType.SNAKE, PlayerType.DD_MALE, PlayerType.DD_FEMALE, PlayerType.AVATAR}
 		local cycle_playerTypes_string={"Snake", "DD Male", "DD Female", "Avatar"}
 		local cycle_PlayerCamoTypes={PlayerCamoType.OLIVEDRAB, PlayerCamoType.SPLITTER, PlayerCamoType.SQUARE, PlayerCamoType.TIGERSTRIPE, PlayerCamoType.GOLDTIGER, PlayerCamoType.FOXTROT, PlayerCamoType.WOODLAND, PlayerCamoType.WETWORK, PlayerCamoType.SNEAKING_SUIT_GZ, PlayerCamoType.SNEAKING_SUIT_TPP, PlayerCamoType.BATTLEDRESS, PlayerCamoType.PARASITE, PlayerCamoType.LEATHER, PlayerCamoType.SOLIDSNAKE, PlayerCamoType.NINJA, PlayerCamoType.RAIDEN}
@@ -1147,46 +1227,42 @@ if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RELOAD)==PlayerPad.RELOAD
 		e.button_3s_hold_pressed = Time.GetRawElapsedTimeSinceStartUp()
 		
 		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RIGHT)==PlayerPad.RIGHT)then
-			if last_faceid then
-				if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
-					vars.playerFaceId=last_faceid + 100
-				elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
-					vars.playerFaceId=last_faceid + 10
-				else
-					vars.playerFaceId=last_faceid + 1
-				end
+			if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
+				vars.playerFaceId=vars.playerFaceId + 100
+			elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
+				vars.playerFaceId=vars.playerFaceId + 10
 			else
-				vars.playerFaceId=0
+				vars.playerFaceId=vars.playerFaceId + 1
 			end
 			
 			TppUiCommand.AnnounceLogDelayTime(0)
-			TppUiCommand.AnnounceLogView(string.format("Face ID: %d",last_faceid))
+			TppUiCommand.AnnounceLogView(string.format("Face ID: %d", vars.playerFaceId))
 		end
 
 		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.LEFT)==PlayerPad.LEFT)then
 
 			if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ZOOM_CHANGE)==PlayerPad.ZOOM_CHANGE)then
-				if last_faceid and last_faceid > 99 then
-					vars.playerFaceId=last_faceid - 100
+				if vars.playerFaceId > 99 then
+					vars.playerFaceId=vars.playerFaceId - 100
 				else
 					vars.playerFaceId=0
 				end
 			elseif (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.FIRE)==PlayerPad.FIRE)then
-				if last_faceid and last_faceid > 9 then
-					vars.playerFaceId=last_faceid - 10
+				if vars.playerFaceId > 9 then
+					vars.playerFaceId=vars.playerFaceId - 10
 				else
 					vars.playerFaceId=0
 				end
 			else
-				if last_faceid and last_faceid > 0 then
-					vars.playerFaceId=last_faceid - 1
+				if vars.playerFaceId > 0 then
+					vars.playerFaceId=vars.playerFaceId - 1
 				else
 					vars.playerFaceId=0
 				end
 			end
 
 			TppUiCommand.AnnounceLogDelayTime(0)
-			TppUiCommand.AnnounceLogView(string.format("Face ID: %d",last_faceid))
+			TppUiCommand.AnnounceLogView(string.format("Face ID: %d", vars.playerFaceId))
 		end
 		
 		if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.PRIMARY_WEAPON)==PlayerPad.PRIMARY_WEAPON)then
@@ -1215,11 +1291,102 @@ if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.RELOAD)==PlayerPad.RELOAD
 					e.cycle_playerTypes_face = vars.playerFaceId
 				end
 
-				vars.playerType=cycle_playerTypes[e.cycle_playerTypes_index]
-				vars.playerFaceId=0
+				
+				if cycle_playerTypes[e.cycle_playerTypes_index] == PlayerType.AVATAR then
+					vars.avatarFaceRaceIndex=0
+					vars.avatarAcceFlag=0
+					vars.avatarFaceTypeIndex=1
+					vars.avatarFaceVariationIndex=1
+					vars.avatarFaceColorIndex=0
+					vars.avatarHairStyleIndex=0
+					vars.avatarRightEyeColorIndex=0
+					vars.avatarRightEyeBrightnessIndex=0
+					vars.avatarLeftEyeColorIndex=1
+					vars.avatarLeftEyeBrightnessIndex=0
+					vars.avatarHairColor=1
+					vars.avatarBerdStyle=0
+					vars.avatarBerdLength=1
+					vars.avatarEbrwStyle=3
+					vars.avatarEbrwWide=1
+					vars.avatarGashOrTatoVariationIndex=0
+					vars.avatarTatoColorIndex=0
+					vars.avatarMotionFrame[0]=4
+					vars.avatarMotionFrame[1]=9
+					vars.avatarMotionFrame[2]=5
+					vars.avatarMotionFrame[3]=5
+					vars.avatarMotionFrame[4]=7
+					vars.avatarMotionFrame[5]=1
+					vars.avatarMotionFrame[6]=7
+					vars.avatarMotionFrame[7]=4
+					vars.avatarMotionFrame[8]=4
+					vars.avatarMotionFrame[9]=5
+					vars.avatarMotionFrame[10]=5
+					vars.avatarMotionFrame[11]=6
+					vars.avatarMotionFrame[12]=5
+					vars.avatarMotionFrame[13]=10
+					vars.avatarMotionFrame[14]=8
+					vars.avatarMotionFrame[15]=4
+					vars.avatarMotionFrame[16]=6
+					vars.avatarMotionFrame[17]=10
+					vars.avatarMotionFrame[18]=0
+					vars.avatarMotionFrame[19]=5
+					vars.avatarMotionFrame[20]=5
+					vars.avatarMotionFrame[21]=7
+					vars.avatarMotionFrame[22]=3
+					vars.avatarMotionFrame[23]=3
+					vars.avatarMotionFrame[24]=6
+					vars.avatarMotionFrame[25]=10
+					vars.avatarMotionFrame[26]=8
+					vars.avatarMotionFrame[27]=6
+					vars.avatarMotionFrame[28]=6
+					vars.avatarMotionFrame[29]=8
+					vars.avatarMotionFrame[30]=2
+					vars.avatarMotionFrame[31]=5
+					vars.avatarMotionFrame[32]=2
+					vars.avatarMotionFrame[33]=1
+					vars.avatarMotionFrame[34]=5
+					vars.avatarMotionFrame[35]=5
+					vars.avatarMotionFrame[36]=4
+					vars.avatarMotionFrame[37]=7
+					vars.avatarMotionFrame[38]=6
+					vars.avatarMotionFrame[39]=9
+					vars.avatarMotionFrame[40]=4
+					vars.avatarMotionFrame[41]=7
+					vars.avatarMotionFrame[42]=6
+					vars.avatarMotionFrame[43]=5
+					vars.avatarMotionFrame[44]=1
+					vars.avatarMotionFrame[45]=4
+					vars.avatarMotionFrame[46]=2
+					vars.avatarMotionFrame[47]=7
+					vars.avatarMotionFrame[48]=8
+					vars.avatarMotionFrame[49]=5
+					vars.avatarMotionFrame[50]=8
+					vars.avatarMotionFrame[51]=6
+					vars.avatarMotionFrame[52]=7
+					vars.avatarMotionFrame[53]=4
+					vars.avatarMotionFrame[54]=7
+					vars.avatarMotionFrame[55]=4
+					vars.avatarMotionFrame[56]=5
+					vars.avatarMotionFrame[57]=9
+					vars.avatarMotionFrame[58]=3
+					vars.avatarMotionFrame[59]=5
+					vars.avatarSaveIsValid=1
+					vars.playerType=PlayerType.AVATAR
+					vars.playerCamoType=PlayerCamoType.OLIVEDRAB
+					vars.playerFaceEquipId=1
+					vars.itemLevels[TppEquip.EQP_SUIT-TppEquip.EQP_IT_InstantStealth]=1
+				else
+					vars.playerType=cycle_playerTypes[e.cycle_playerTypes_index]
+					vars.playerFaceId=0
+					vars.playerFaceEquipId=0
+				end
 
 				if vars.playerType == PlayerType.DD_MALE or vars.playerType == PlayerType.DD_FEMALE then
 					vars.playerFaceId = e.cycle_playerTypes_face
+				end
+
+				if cycle_playerTypes[e.cycle_playerTypes_index] == PlayerType.DD_FEMALE then
+					vars.playerFaceId=350
 				end
 				
 				TppUiCommand.AnnounceLogDelayTime(0)
@@ -1264,7 +1431,7 @@ end
 if (bit.band(PlayerVars.scannedButtonsDirect,PlayerPad.ACTION)==PlayerPad.ACTION)then
 
 	vars.playerDisableActionFlag=PlayerDisableAction.OPEN_EQUIP_MENU
-	button_3s_disable_action = true
+	e.button_3s_disable_action = true
 
 	if (Time.GetRawElapsedTimeSinceStartUp() - e.button_3s_hold_pressed2 > 1)then
 

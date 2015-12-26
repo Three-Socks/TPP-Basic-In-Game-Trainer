@@ -59,12 +59,14 @@ if not %errorlevel%==0 (
 echo %tpp_install_file_inf% >> %tpp_install_data%.inf
 )
 
+set skip_patch=0
+
 findstr /C:"%tpp_install_file%" %file_tpp%
 if %errorlevel%==0 (
 cls
 echo "Looks like %file_tpp% file patch was already made, skipping..."
 TIMEOUT /NOBREAK /t 2
-goto :skip_file_patch
+set skip_patch=1
 )
 
 findstr /C:"%tpp_install_mod_name%.Update" %file_tppmain%
@@ -72,8 +74,10 @@ if %errorlevel%==0 (
 cls
 echo "Looks like %file_tppmain% file patch was already made, skipping..."
 TIMEOUT /NOBREAK /t 2
-goto :skip_file_patch
+set skip_patch=1
 )
+
+if %skip_patch%==1 goto :skip_file_patch
 
 setlocal EnableDelayedExpansion
 set "output_cnt=0"

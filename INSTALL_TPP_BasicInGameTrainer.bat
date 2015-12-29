@@ -33,12 +33,12 @@ echo "Copying and patching files..."
 TIMEOUT /NOBREAK /t 2
 
 set file_tpp=%tpp_install_data%\Assets\tpp\script\lib\Tpp.lua
-set file_tpp_find=,"/Assets/tpp/script/lib/TppMbFreeDemo.lua"
-set file_tpp_replace=,"/Assets/tpp/script/lib/TppMbFreeDemo.lua","/Assets/tpp/script/lib/%tpp_install_file%"
+set file_tpp_find="/Assets/tpp/script/lib/TppMbFreeDemo.lua"
+set file_tpp_replace="/Assets/tpp/script/lib/TppMbFreeDemo.lua","/Assets/tpp/script/lib/%tpp_install_file%"
 
 set file_tppmain=%tpp_install_data%\Assets\tpp\script\lib\TppMain.lua
-set file_tppmain_find=,TppMission.UpdateForMissionLoad
-set file_tppmain_replace=,TppMission.UpdateForMissionLoad,%tpp_install_mod_name%.Update
+set file_tppmain_find=TppMission.UpdateForMissionLoad
+set file_tppmain_replace=TppMission.UpdateForMissionLoad,%tpp_install_mod_name%.Update
 
 if not exist "%file_tpp%" (
 echo "%file_tpp% was not found in %tpp_install_data%. %tpp_install_mod_name% was not installed."
